@@ -9,7 +9,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>CIM-JSON serializer and a CIM-XML file reader</description>
     <dependencies>
-        <dependency id="DAX.CIM.PhysicalNetworkModel" version="0.2.0-b01" />
+        <dependency id="DAX.CIM.PhysicalNetworkModel" version="1.0.0" />
         <dependency id="FastMember" version="1.1.0" />
         <dependency id="Newtonsoft.Json" version="9.0.1" />
     </dependencies>

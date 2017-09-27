@@ -71,7 +71,9 @@
     <Compile Include="Converters\ShortNameBinder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DAX.Cson.nuspec" />
+    <None Include="DAX.Cson.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

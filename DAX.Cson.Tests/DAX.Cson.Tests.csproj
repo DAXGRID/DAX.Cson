@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assumptions\TypeStats.cs" />
+    <Compile Include="Bugs\TestRoundtripOddity.cs" />
     <Compile Include="Serializer\TestCsonSerializer.cs" />
     <Compile Include="Extensions\TestExtensions.cs" />
     <Compile Include="FixtureBase.cs" />

@@ -13,10 +13,8 @@ namespace DAX.Cson
     /// </summary>
     public class CsonSerializer
     {
-        readonly int _lineBufferSize;
-        static readonly byte[] LineBreakBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
-
         readonly CustomizedJsonSerializer _serializer = new CustomizedJsonSerializer();
+        readonly int _lineBufferSize;
 
         /// <summary>
         /// Creates the CSON serializer with the given line buffer size

@@ -20,10 +20,10 @@ namespace DAX.Cson.Internals
                 {
                     //new Point2DConverter(),
                     //new CustomDateTimeConverter()
-
-                    new ObjectReferenceSerializer(),
                     //new MeasurementTypeSerializer5(),
                     //new MeasurementTypeSerializer4(),
+
+                    new ObjectReferenceSerializer(),
                     new MeasurementTypeSerializer3(),
                 },
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,

@@ -81,19 +81,7 @@ namespace DAX.Cson.Converters
             var typeAccessor = TypeAccessor.Create(type);
             var propertyType = type.GetProperty(ValueFieldName).PropertyType;
 
-            return obj =>
-            {
-                var value = GetValueAsString(typeAccessor, obj, propertyType);
-                var multiplier = (UnitMultiplier)typeAccessor[obj, MultiplierFieldName];
-                var unit = (UnitSymbol)typeAccessor[obj, UnitFieldName];
-
-                var multiplierAndSymbol = new MultiplierAndSymbol(
-                    multiplier,
-                    unit
-                );
-
-                return string.Concat(value, " ", multiplierAndSymbol.Key).Trim();
-            };
+            return obj => Serialize(typeAccessor, obj, propertyType);
         }
 
         static object GetValueAsString(TypeAccessor typeAccessor, object obj, Type propertyType)
@@ -115,43 +103,62 @@ namespace DAX.Cson.Converters
 
         static Func<string, object> Deserialize(Type type)
         {
-            var propertyType = type.GetProperty(ValueFieldName).PropertyType;
+            var propertyInfo = type.GetProperty(ValueFieldName);
+            if (propertyInfo == null) throw new ApplicationException($"Could not find '{ValueFieldName}' property on measurement class {type}");
+
+            var propertyType = propertyInfo.PropertyType;
             var typeAccessor = TypeAccessor.Create(type);
 
-            return value =>
+            return value => Deserialize(value, typeAccessor, propertyType);
+        }
+
+        static string Serialize(TypeAccessor typeAccessor, object obj, Type propertyType)
+        {
+            var value = GetValueAsString(typeAccessor, obj, propertyType);
+            var multiplier = (UnitMultiplier)typeAccessor[obj, MultiplierFieldName];
+            var unit = (UnitSymbol)typeAccessor[obj, UnitFieldName];
+
+            var multiplierAndSymbol = new MultiplierAndSymbol(
+                multiplier,
+                unit
+            );
+
+            return string.Concat(value, " ", multiplierAndSymbol.Key).Trim();
+        }
+
+        static object Deserialize(string value, TypeAccessor typeAccessor, Type propertyType)
+        {
+            var parts = value.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts.Length == 1)
             {
-                var parts = value.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                var instance = typeAccessor.CreateNew();
+                typeAccessor[instance, ValueFieldName] = ChangeType(parts[0], propertyType);
+                return instance;
+            }
 
-                if (parts.Length == 1)
+            if (parts.Length == 2)
+            {
+                var instance = typeAccessor.CreateNew();
+
+                typeAccessor[instance, ValueFieldName] = ChangeType(parts[0], propertyType);
+
+                var multiplierAndUnit = MultiplierAndSymbol.GetMultiplierAndUnit(parts[1]);
+
+                if (multiplierAndUnit.UnitMultiplier.HasValue)
                 {
-                    var instance = typeAccessor.CreateNew();
-                    typeAccessor[instance, ValueFieldName] = ChangeType(parts[0], propertyType);
-                    return instance;
+                    typeAccessor[instance, MultiplierFieldName] = multiplierAndUnit.UnitMultiplier.Value;
                 }
 
-                if (parts.Length == 2)
+                if (multiplierAndUnit.UnitSymbol.HasValue)
                 {
-                    var instance = typeAccessor.CreateNew();
-
-                    typeAccessor[instance, ValueFieldName] = ChangeType(parts[0], propertyType);
-
-                    var multiplierAndUnit = MultiplierAndSymbol.GetMultiplierAndUnit(parts[1]);
-
-                    if (multiplierAndUnit.UnitMultiplier.HasValue)
-                    {
-                        typeAccessor[instance, MultiplierFieldName] = multiplierAndUnit.UnitMultiplier.Value;
-                    }
-
-                    if (multiplierAndUnit.UnitSymbol.HasValue)
-                    {
-                        typeAccessor[instance, UnitFieldName] = multiplierAndUnit.UnitSymbol.Value;
-                    }
-
-                    return instance;
+                    typeAccessor[instance, UnitFieldName] = multiplierAndUnit.UnitSymbol.Value;
                 }
 
-                throw new FormatException($"Could not turn '{value}' into proper measurement value");
-            };
+                return instance;
+            }
+
+            throw new FormatException($"Could not turn '{value}' into proper measurement value");
         }
 
 

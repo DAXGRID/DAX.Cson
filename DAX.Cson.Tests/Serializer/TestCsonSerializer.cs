@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq;
 using DAX.CIM.PhysicalNetworkModel;
 using DAX.Cson.Tests.Extensions;
@@ -31,25 +32,34 @@ namespace DAX.Cson.Tests.Serializer
             Console.WriteLine(string.Join(Environment.NewLine, jsonLines.Select(json => json.PrettifyJson())));
         }
 
-        [Test]
-        public void RoundtripManyObjects()
+        [TestCase(100)]
+        [TestCase(1000)]
+        [TestCase(10000)]
+        public void RoundtripManyObjects(int howMany)
         {
             var counts = new ConcurrentDictionary<Type, int>();
             var reader = new CimObjectFactory();
             var serializer = new CsonSerializer();
 
-            foreach (var obj in reader.Read())
+            var objects = reader.Read().Take(howMany).ToList();
+            var stopwatch = Stopwatch.StartNew();
+
+            foreach (var obj in objects)
             {
                 Roundtrip(serializer, obj);
 
                 counts.AddOrUpdate(obj.GetType(), 1, (_, value) => value + 1);
             }
 
+            var elapsed = stopwatch.Elapsed;
+
             Console.WriteLine($@"Successfully roundtripped objects
 
 {string.Join(Environment.NewLine, counts.Select(kvp => $"    {kvp.Key}: {kvp.Value}"))}
 
-Total: {counts.Sum(kvp => kvp.Value)}
+in {elapsed.TotalSeconds:0.0} s
+
+Total: {counts.Sum(kvp => kvp.Value)} => {howMany / elapsed.TotalSeconds:0.0} obj/s
 ");
         }
 

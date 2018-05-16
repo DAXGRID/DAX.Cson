@@ -64,6 +64,7 @@
     <Compile Include="Bugs\CheckThisConcretePieceOfJson.cs" />
     <Compile Include="Bugs\CheckThisSpecificScenario.cs" />
     <Compile Include="Bugs\TestRoundtripOddity.cs" />
+    <Compile Include="Changes\CanSerializeChangesToo.cs" />
     <Compile Include="Serializer\TestCsonSerializer.cs" />
     <Compile Include="Extensions\TestExtensions.cs" />
     <Compile Include="FixtureBase.cs" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DAX.CIM.PhysicalNetworkModel;
+using DAX.CIM.PhysicalNetworkModel.Changes;
 using FastMember;
 using Newtonsoft.Json;
 
@@ -21,6 +22,7 @@ namespace DAX.Cson.Converters
             var mappers = typeof(Asset).Assembly.GetTypes()
                 .Where(t => t.Namespace == ns)
                 .Where(IsReferenceType)
+                .Concat(new[] { typeof(TargetObject) })
                 .Select(t => new
                 {
                     Type = t,
@@ -72,11 +74,11 @@ namespace DAX.Cson.Converters
         static Func<object, string> Serialize(Type type)
         {
             var typeAccessor = TypeAccessor.Create(type);
-            
+
             return obj =>
             {
-                var referenceType = (string) typeAccessor[obj, ReferenceTypeFieldName];
-                var @ref = (string) typeAccessor[obj, RefFieldName];
+                var referenceType = (string)typeAccessor[obj, ReferenceTypeFieldName];
+                var @ref = (string)typeAccessor[obj, RefFieldName];
                 return referenceType != null
                     ? $"{referenceType}/{@ref}"
                     : @ref;

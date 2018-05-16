@@ -10,8 +10,7 @@ namespace DAX.Cson.Tests
 
         protected void CleanUpDisposables()
         {
-            IDisposable disposable;
-            while (_disposables.TryPop(out disposable))
+            while (_disposables.TryPop(out var disposable))
             {
                 disposable.Dispose();
             }

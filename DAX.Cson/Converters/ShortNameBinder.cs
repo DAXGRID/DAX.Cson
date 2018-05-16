@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DAX.CIM.PhysicalNetworkModel;
+using DAX.CIM.PhysicalNetworkModel.Changes;
 using Newtonsoft.Json.Serialization;
 
 namespace DAX.Cson.Converters
@@ -14,7 +15,12 @@ namespace DAX.Cson.Converters
 
         public ShortNameBinder()
         {
-            var ns = typeof(IdentifiedObject).Namespace;
+            AddTypesFromNamespace(typeof(IdentifiedObject).Namespace);
+            AddTypesFromNamespace(typeof(DataSetMember).Namespace);
+        }
+
+        void AddTypesFromNamespace(string ns)
+        {
             var types = typeof(IdentifiedObject).Assembly.GetTypes()
                 .Where(obj => obj.Namespace == ns);
 

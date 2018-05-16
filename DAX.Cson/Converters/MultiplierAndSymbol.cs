@@ -18,9 +18,9 @@ namespace DAX.Cson.Converters
                 (from multiplier in multipliers
                  from unit in units
                  let mulli = new MultiplierAndSymbol(multiplier, unit)
-                 where !(mulli.UnitMultiplier == DAX.CIM.PhysicalNetworkModel.UnitMultiplier.m && mulli.UnitSymbol == null)
-                       && !(mulli.UnitMultiplier == DAX.CIM.PhysicalNetworkModel.UnitMultiplier.none && mulli.UnitSymbol == null)
-                       && !(mulli.UnitMultiplier == DAX.CIM.PhysicalNetworkModel.UnitMultiplier.m && mulli.UnitSymbol == DAX.CIM.PhysicalNetworkModel.UnitSymbol.none)
+                 //where !(mulli.UnitMultiplier == CIM.PhysicalNetworkModel.UnitMultiplier.m && mulli.UnitSymbol == null)
+                 //      && !(mulli.UnitMultiplier == CIM.PhysicalNetworkModel.UnitMultiplier.none && mulli.UnitSymbol == null)
+                 //      && !(mulli.UnitMultiplier == CIM.PhysicalNetworkModel.UnitMultiplier.m && mulli.UnitSymbol == CIM.PhysicalNetworkModel.UnitSymbol.none)
                  select mulli)
                 .ToList();
 
@@ -57,14 +57,43 @@ The tuple defined by (UnitMultiplier, UnitSymbol) must be unambiguously identifi
             UnitMultiplier = unitMultiplier;
             UnitSymbol = unitSymbol;
 
-            Key = String.Concat(
-                UnitMultiplier == DAX.CIM.PhysicalNetworkModel.UnitMultiplier.none ? "" : UnitMultiplier.ToString(),
-                UnitSymbol == DAX.CIM.PhysicalNetworkModel.UnitSymbol.none ? "" : UnitSymbol.ToString()
+            // handle these problematic cases even though they are artificial
+            if (IsProblematicCombination(UnitMultiplier, UnitSymbol))
+            {
+                Key = $"{UnitMultiplier}/{UnitSymbol}";
+                return;
+            }
+
+            Key = string.Concat(
+                UnitMultiplier == CIM.PhysicalNetworkModel.UnitMultiplier.none ? "" : UnitMultiplier.ToString(),
+                UnitSymbol == CIM.PhysicalNetworkModel.UnitSymbol.none ? "" : UnitSymbol.ToString()
             );
         }
 
         public UnitMultiplier? UnitMultiplier { get; }
+
         public UnitSymbol? UnitSymbol { get; }
+
+        static bool IsProblematicCombination(UnitMultiplier? UnitMultiplier, UnitSymbol? UnitSymbol)
+        {
+            if (UnitMultiplier == CIM.PhysicalNetworkModel.UnitMultiplier.none && UnitSymbol == CIM.PhysicalNetworkModel.UnitSymbol.none)
+            {
+                return true;
+            }
+
+            if (UnitMultiplier == CIM.PhysicalNetworkModel.UnitMultiplier.m && UnitSymbol == CIM.PhysicalNetworkModel.UnitSymbol.none)
+            {
+                return true;
+            }
+
+            if (UnitMultiplier == CIM.PhysicalNetworkModel.UnitMultiplier.none && UnitSymbol == CIM.PhysicalNetworkModel.UnitSymbol.m)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public string Key { get; }
 
         public override string ToString()

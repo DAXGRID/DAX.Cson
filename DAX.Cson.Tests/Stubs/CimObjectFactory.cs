@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
 using DAX.CIM.PhysicalNetworkModel;
 using DAX.CIM.PhysicalNetworkModel.Changes;
 using Ploeh.AutoFixture;
@@ -59,6 +61,20 @@ namespace DAX.Cson.Tests.Stubs
                 var type = _objectTypes[_random.Next(_objectTypes.Count)];
 
                 yield return Resolve(type);
+            }
+        }
+
+        class IgnoredPropertyOmitter : ISpecimenBuilder
+        {
+            public object Create(object request, ISpecimenContext context)
+            {
+                if (request is PropertyInfo propertyInfo
+                    && propertyInfo.GetCustomAttributes(typeof(IgnoreDataMemberAttribute)).Any())
+                {
+                    return new OmitSpecimen();
+                }
+
+                return new NoSpecimen();
             }
         }
     }

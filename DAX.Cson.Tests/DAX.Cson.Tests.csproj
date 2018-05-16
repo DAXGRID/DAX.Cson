@@ -71,7 +71,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer\TestCustomizedJsonSerializer.cs" />
     <Compile Include="Streaming\TestCallbackStream.cs" />
-    <Compile Include="Stubs\IgnoredPropertyOmitter.cs" />
     <Compile Include="Stubs\CimObjectFactory.cs" />
   </ItemGroup>
   <ItemGroup>

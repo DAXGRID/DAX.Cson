@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DAX.CIM.PhysicalNetworkModel;
+using DAX.CIM.PhysicalNetworkModel.Changes;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.Kernel;
 
@@ -17,12 +18,23 @@ namespace DAX.Cson.Tests.Stubs
         {
             var fixture = new Fixture();
 
+            fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                .ForEach(b => fixture.Behaviors.Remove(b));
+
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+            fixture.Customizations.Add(new IgnoredPropertyOmitter());
+
             _specimenContext = new SpecimenContext(fixture);
 
             _objectTypes = typeof(IdentifiedObject).Assembly
                 .GetTypes()
                 .Where(t => t.IsClass && !t.IsAbstract)
                 .Where(t => typeof(IdentifiedObject).IsAssignableFrom(t))
+                .Except(new[]
+                {
+                    typeof(DataSetMember),
+                })
                 .ToList();
 
             _random = new Random(DateTime.Now.GetHashCode());
@@ -30,11 +42,23 @@ namespace DAX.Cson.Tests.Stubs
 
         public IEnumerable<IdentifiedObject> Read()
         {
+            IdentifiedObject Resolve(Type type)
+            {
+                try
+                {
+                    return (IdentifiedObject) _specimenContext.Resolve(type);
+                }
+                catch (Exception exception)
+                {
+                    throw new ApplicationException($"Could not generate {type} with AutoFixture", exception);
+                }
+            }
+
             while (true)
             {
                 var type = _objectTypes[_random.Next(_objectTypes.Count)];
 
-                yield return (IdentifiedObject)_specimenContext.Resolve(type);
+                yield return Resolve(type);
             }
         }
     }

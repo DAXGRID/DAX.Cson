@@ -16,7 +16,7 @@ namespace DAX.Cson.Tests.Assumptions
             var allTypes = GetAllTypes();
 
             var entityTypes = allTypes.Where(t => typeof(IdentifiedObject).IsAssignableFrom(t)).ToList();
-            var valueTypes = allTypes.Except(entityTypes).Except(new[] { typeof(PhysicalNetworkModelEnvelope) }).ToList();
+            var valueTypes = allTypes.Except(entityTypes).ToList();
 
             var entityList = GetList(entityTypes);
             var valueList = GetList(valueTypes);
@@ -51,6 +51,7 @@ Values:
             var allTypes = typeof(IdentifiedObject).Assembly
                 .GetTypes().Where(t => t.Namespace == ns)
                 .ToList();
+
             return allTypes;
         }
 

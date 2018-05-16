@@ -27,7 +27,8 @@ namespace DAX.Cson.Internals
                     new MeasurementTypeSerializer3(),
                 },
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                DefaultValueHandling = DefaultValueHandling.Ignore
+                DefaultValueHandling = DefaultValueHandling.Ignore,
+                ContractResolver = new CustomizedContractResolver()
             };
 
             return settings;

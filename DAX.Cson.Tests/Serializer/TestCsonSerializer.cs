@@ -61,13 +61,21 @@ Total: {counts.Sum(kvp => kvp.Value)}
 
             if (initialJson != roundtrippedJson)
             {
-                throw new AssertionException($@"Found an object that did not preserve everything when roundtripped:
+                throw new AssertionException($@"Found object of type {identifiedObject.GetType().Name} that did not preserve everything when roundtripped:
 
 {initialJson}
 
 =>
 
-{roundtrippedJson}");
+{roundtrippedJson}
+
+Here's the CSON for the two objects:
+
+{serializer.SerializeObject(identifiedObject)}
+
+=>
+
+{serializer.SerializeObject(roundtrippedObject)}");
             }
         }
     }

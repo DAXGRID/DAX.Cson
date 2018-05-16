@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DAX.CIM.PhysicalNetworkModel;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.Kernel;
@@ -10,15 +9,15 @@ namespace DAX.Cson.Tests.Stubs
 {
     public class CimObjectFactory
     {
-        readonly Fixture _fixture;
         readonly SpecimenContext _specimenContext;
         readonly List<Type> _objectTypes;
-        Random _random;
+        readonly Random _random;
 
         public CimObjectFactory()
         {
-            _fixture = new Fixture();
-            _specimenContext = new SpecimenContext(_fixture);
+            var fixture = new Fixture();
+
+            _specimenContext = new SpecimenContext(fixture);
 
             _objectTypes = typeof(IdentifiedObject).Assembly
                 .GetTypes()

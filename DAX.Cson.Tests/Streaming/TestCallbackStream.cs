@@ -76,7 +76,7 @@ namespace DAX.Cson.Tests.Streaming
                 Buffer.BlockCopy(randomData, position, buffer, 0, count);
                 position += count;
                 request.Write(buffer, 0, buffer.Length);
-            });
+            }, null);
             return stream;
         }
 

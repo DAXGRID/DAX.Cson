@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -18,7 +19,9 @@ namespace DAX.Cson.Internals
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
             var jsonProperty = base.CreateProperty(member, memberSerialization);
-            var ignored = member.GetCustomAttributes(typeof(IgnoreDataMemberAttribute)).Any();
+
+            var ignored = member.GetCustomAttributes(typeof(IgnoreDataMemberAttribute)).Any()
+                          || member.GetCustomAttributes(typeof(XmlIgnoreAttribute)).Any();
 
             jsonProperty.ShouldSerialize = ignored ? No : Yes;
 

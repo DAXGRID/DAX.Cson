@@ -19,18 +19,12 @@ namespace DAX.Cson
         /// <summary>
         /// Creates the CSON serializer with the given line buffer size
         /// </summary>
-        public CsonSerializer(int lineBufferSize = 1024)
-        {
-            _lineBufferSize = lineBufferSize;
-        }
+        public CsonSerializer(int lineBufferSize = 1024) => _lineBufferSize = lineBufferSize;
 
         /// <summary>
         /// Serializes a single object to a JSON string
         /// </summary>
-        public string SerializeObject(IdentifiedObject obj)
-        {
-            return _serializer.Serialize(obj);
-        }
+        public string SerializeObject(IdentifiedObject obj) => _serializer.Serialize(obj);
 
         /// <summary>
         /// Deserializes a single object into its <see cref="IdentifiedObject"/> subclass
@@ -79,21 +73,7 @@ namespace DAX.Cson
                 }
 
                 enumerator.Dispose();
-
-                //if (enumerator.MoveNext())
-                //{
-                //    var current = enumerator.Current;
-                //    var line = SerializeObject(current);
-                //    var bytes = Encoding.UTF8.GetBytes(line);
-
-                //    request.Write(bytes);
-                //    request.Write(LineBreakBytes);
-                //}
-                //else
-                //{
-                //    enumerator.Dispose();
-                //}
-            });
+            }, enumerator);
 
             return callbackStream;
         }

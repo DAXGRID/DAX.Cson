@@ -29,13 +29,14 @@ namespace DAX.Cson.Internals
         readonly Action<CallbackStreamDataRequest> _requestData;
         readonly CallbackStreamDataRequest _dataRequest;
         readonly Queue<byte[]> _buffers = new Queue<byte[]>();
+        readonly IDisposable _extraDisposable;
 
         int _currentBufferPosition;
 
-        public CallbackStream(Action<CallbackStreamDataRequest> requestData)
+        public CallbackStream(Action<CallbackStreamDataRequest> requestData, IDisposable extraDisposable)
         {
-            if (requestData == null) throw new ArgumentNullException(nameof(requestData));
-            _requestData = requestData;
+            _requestData = requestData ?? throw new ArgumentNullException(nameof(requestData));
+            _extraDisposable = extraDisposable;
             _dataRequest = new CallbackStreamDataRequest(this);
         }
 
@@ -113,6 +114,12 @@ namespace DAX.Cson.Internals
         {
             get { return -1; }
             set { throw new InvalidOperationException("Cannot set Position"); }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _extraDisposable?.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

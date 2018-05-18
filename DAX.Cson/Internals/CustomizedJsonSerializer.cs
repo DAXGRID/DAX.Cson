@@ -27,8 +27,10 @@ namespace DAX.Cson.Internals
                     new MeasurementTypeSerializer3(),
                 },
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                ContractResolver = new CustomizedContractResolver(),
+                
+                // it's important that 0, false, etc are serialized too
                 //DefaultValueHandling = DefaultValueHandling.Ignore,
-                ContractResolver = new CustomizedContractResolver()
             };
 
             return settings;

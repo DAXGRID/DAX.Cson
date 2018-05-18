@@ -1,6 +1,7 @@
 ﻿using System;
 using DAX.CIM.PhysicalNetworkModel;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace DAX.Cson.Tests.Bugs
@@ -21,34 +22,19 @@ namespace DAX.Cson.Tests.Bugs
             var whenTrue = new GroundDisconnector { normalOpen = true };
             var whenFalse = new GroundDisconnector { normalOpen = false };
 
-            Console.WriteLine($@"When true:
-
-{_serializer.SerializeObject(whenTrue)}
-
-When false:
-
-{_serializer.SerializeObject(whenFalse)}");
-        }
-
-        [Test]
-        public void VerifyJsonDotNetAssumption()
-        {
-            var settings = new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                Formatting = Formatting.Indented
-            };
-
-            var whenTrue = JsonConvert.SerializeObject(new { BooleanProperty = true }, settings);
-            var whenFalse = JsonConvert.SerializeObject(new { BooleanProperty = false }, settings);
+            var whenTrueCson = _serializer.SerializeObject(whenTrue);
+            var whenFalseCson = _serializer.SerializeObject(whenFalse);
 
             Console.WriteLine($@"When true:
 
-{whenTrue}
+{whenTrueCson}
 
 When false:
 
-{whenFalse}");
+{whenFalseCson}");
+
+            Assert.That(JObject.Parse(whenTrueCson).Property("normalOpen"), Is.Not.Null, "Expected the 'normalOpen' property to be there");
+            Assert.That(JObject.Parse(whenFalseCson).Property("normalOpen"), Is.Not.Null, "Expected the 'normalOpen' property to be there ALSO when the value is false");
         }
     }
 }

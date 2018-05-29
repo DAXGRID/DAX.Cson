@@ -1,6 +1,5 @@
 ﻿using System;
 using DAX.CIM.PhysicalNetworkModel;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 

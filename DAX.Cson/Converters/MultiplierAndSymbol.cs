@@ -88,7 +88,8 @@ The tuple defined by (UnitMultiplier, UnitSymbol) must be unambiguously identifi
 
             if (UnitMultiplier == CIM.PhysicalNetworkModel.UnitMultiplier.none && UnitSymbol == CIM.PhysicalNetworkModel.UnitSymbol.m)
             {
-                return true;
+                // this one used to return true, but a single "m" must be interpreted as METERS and should thusly NOT be considered problematic
+                return false;
             }
 
             return false;

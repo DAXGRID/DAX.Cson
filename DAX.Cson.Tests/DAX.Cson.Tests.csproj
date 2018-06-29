@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assumptions\TypeStats.cs" />
+    <Compile Include="Bugs\CheckRoundtripEntityWithThatSillySpecifiedProperty.cs" />
     <Compile Include="Bugs\CheckTheSynchronousMachine.cs" />
     <Compile Include="Bugs\CheckThisConcretePieceOfJson.cs" />
     <Compile Include="Bugs\CheckThisOtherConcretePieceOfJson.cs" />
